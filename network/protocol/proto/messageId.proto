@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package  messageId;
+
+option go_package="/proto";
+
+enum MessageId {
+  None =0;
+
+  LoginReq=50001;
+  LoginResp=50002;
+
+  //player
+  AddFriendReq=100001;
+  AddFriendResp=100002;
+  DelFriendReq=100003;
+  DelFriendResp=100004;
+  SendChatMsgReq=100005;
+  SendChatMsgResp=100006;
+}

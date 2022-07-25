@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package player;
+option go_package="/proto"; // 自动生成文件所在的目录 eg: proto/*.pb.go
+
+message LoginReq{
+  uint64 UId = 1;
+}
+
+message LoginResp{
+  string Ok = 1;
+}
+
+message AddFriendReq{
+  uint64 UId = 1;
+}
+
+message AddFriendResp{
+  string Desc = 1;
+}
+
+message DelFriendReq{
+  uint64 UId = 1; // 玩家Id
+}
+
+message DelFriendResp{
+  string Desc = 1; // 请求成功与否描述
+}
+
+message ChatMessage{
+  string Content =1;
+  repeated bytes  extra=2;
+}
+
+message CSSendChatMsg{
+  uint64  UId =1;
+  ChatMessage msg=2;
+}
+
