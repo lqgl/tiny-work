@@ -4,5 +4,6 @@ import "github.com/lqgl/tinywork/world"
 
 func main() {
 	world.MM = world.NewMgrMgr()
-	world.MM.Pm.Run()
+	go world.MM.Run()
+	select {}
 }

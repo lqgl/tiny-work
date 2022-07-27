@@ -6,17 +6,18 @@ import (
 )
 
 type Server struct {
-	listener net.Listener
-	address  string
-	network  string
+	tcpListener     net.Listener
+	address         string
+	network         string
+	OnSessionPacket func(packet *SessionPacket)
 }
 
 func NewServer(address, network string) *Server {
-	return &Server{
-		listener: nil,
-		address:  address,
-		network:  network,
+	s := &Server{
+		address: address,
+		network: network,
 	}
+	return s
 }
 
 func (s *Server) Run() {
@@ -30,15 +31,18 @@ func (s *Server) Run() {
 		fmt.Println(err)
 		return
 	}
-	s.listener = tcpListener
+	s.tcpListener = tcpListener
 	for {
-		conn, err := s.listener.Accept()
+		conn, err := s.tcpListener.Accept()
 		if err != nil {
 			continue
 		}
 		go func() {
 			newSession := NewSession(conn)
+			newSession.MessageHandler = s.OnSessionPacket // 初始化 session.MessageHandler
+			SessionMgrInstance.AddSession(newSession)
 			newSession.Run()
+			SessionMgrInstance.DelSession(newSession.UId)
 		}()
 	}
 }

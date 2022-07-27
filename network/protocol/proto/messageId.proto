@@ -7,8 +7,10 @@ option go_package="/proto";
 enum MessageId {
   None =0;
 
-  LoginReq=50001;
-  LoginResp=50002;
+  CreatePlayerReq=50001;
+  CreatePlayerResp=50002;
+  LoginReq=50003;
+  LoginResp=50004;
 
   //player
   AddFriendReq=100001;

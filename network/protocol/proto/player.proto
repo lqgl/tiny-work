@@ -3,8 +3,18 @@ syntax = "proto3";
 package player;
 option go_package="/proto"; // 自动生成文件所在的目录 eg: proto/*.pb.go
 
+message CreateUserReq{
+  string  UserName=1;
+  string  Password=2;
+}
+
+message CreateUserResp{
+
+}
+
 message LoginReq{
-  uint64 UId = 1;
+  string  UserName=1;
+  string  Password=2;
 }
 
 message LoginResp{
@@ -32,7 +42,14 @@ message ChatMessage{
   repeated bytes  extra=2;
 }
 
-message CSSendChatMsg{
+//聊天请求
+message SendChatMsgReq{
+  uint64  UId =1;
+  ChatMessage msg=2;
+  int32  Category =3; // 聊天类型
+}
+
+message SendChatMsgResp{
   uint64  UId =1;
   ChatMessage msg=2;
 }

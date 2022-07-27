@@ -18,6 +18,6 @@ protoc --proto_path=./proto/ --go_out=./gen/ proto/*.proto
 
 mkdir doc
 
-protoc --validate_out="lang=go:./gen" --go_out=./gen/ --doc_out=./doc --doc_opt=html,index.html proto/*.proto
+# protoc --validate_out="lang=go:./gen" --go_out=./gen/ --doc_out=./doc --doc_opt=html,index.html proto/*.proto
 
 

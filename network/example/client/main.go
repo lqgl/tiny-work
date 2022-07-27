@@ -1,6 +1,8 @@
 package main
 
-import "github.com/lqgl/tinywork/network"
+import (
+	"github.com/lqgl/tinywork/network"
+)
 
 func main() {
 	client := network.NewClient(":8023", "tcp6")

@@ -3,8 +3,6 @@ package network
 import (
 	"encoding/binary"
 	"io"
-	"net"
-	"time"
 )
 
 type NormalPacker struct {
@@ -27,10 +25,10 @@ func (p *NormalPacker) Pack(message *Message) ([]byte, error) {
 // UnPack returns Message
 func (p *NormalPacker) UnPack(reader io.Reader) (*Message, error) {
 	// 注意连接的超时与请求的超时
-	err := reader.(*net.TCPConn).SetReadDeadline(time.Now().Add(time.Second * 10))
-	if err != nil {
-		return nil, err
-	}
+	//err := reader.(*net.TCPConn).SetReadDeadline(time.Now().Add(time.Second * 10))
+	//if err != nil {
+	//	return nil, err
+	//}
 	buffer := make([]byte, 8+8)
 	if _, err := io.ReadFull(reader, buffer); err != nil {
 		return nil, err

@@ -4,14 +4,14 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	"time"
 )
 
 type Client struct {
-	address string
-	network string
-	packer  IPacker
-	chMsg   chan *Message
+	address   string
+	network   string
+	packer    IPacker
+	ChMsg     chan *Message
+	OnMessage func(message *ClientPacket)
 }
 
 func NewClient(address, network string) *Client {
@@ -21,7 +21,7 @@ func NewClient(address, network string) *Client {
 		packer: &NormalPacker{
 			ByteOrder: binary.BigEndian,
 		},
-		chMsg: make(chan *Message, 1),
+		ChMsg: make(chan *Message, 1),
 	}
 }
 
@@ -36,33 +36,33 @@ func (c Client) Run() {
 	go c.Write(conn)
 }
 
-func (c Client) Write(conn net.Conn) (*Message, error) {
-	tick := time.NewTicker(time.Second)
+// Write 将收到的消息写入连接
+func (c *Client) Write(conn net.Conn) {
 	for {
 		select {
-		case <-tick.C:
-			c.chMsg <- &Message{
-				Id:   11111,
-				Data: []byte("Hello World!"),
-			}
-		case msg := <-c.chMsg:
-			c.send(conn, msg)
+		case msg := <-c.ChMsg: // cli 接收到来自 Client 的消息
+			c.Send(conn, msg)
 		}
 	}
 }
 
-func (c Client) Read(conn net.Conn) {
+// Read 读取服务器返回的消息
+func (c *Client) Read(conn net.Conn) {
 	for {
 		message, err := c.packer.UnPack(conn)
 		if _, ok := err.(net.Error); err != nil && ok { // 处理网络原因
 			fmt.Println(err)
 			continue
 		}
-		fmt.Println("resp message:", string(message.Data))
+		c.OnMessage(&ClientPacket{
+			Msg:  message,
+			Conn: conn,
+		})
 	}
 }
 
-func (c Client) send(conn net.Conn, message *Message) {
+// Send 发送消息
+func (c *Client) Send(conn net.Conn, message *Message) {
 	pack, err := c.packer.Pack(message)
 	if err != nil {
 		fmt.Println(err)
