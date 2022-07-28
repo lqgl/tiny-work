@@ -2,8 +2,9 @@ package network
 
 import (
 	"encoding/binary"
-	"fmt"
+	"github.com/lqgl/tinywork/logger"
 	"net"
+	"time"
 )
 
 type Client struct {
@@ -26,9 +27,9 @@ func NewClient(address, network string) *Client {
 }
 
 func (c Client) Run() {
-	conn, err := net.Dial(c.network, c.address)
+	conn, err := net.DialTimeout(c.network, c.address, 5*time.Second) // 设置tcp连接请求超时
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.ErrorF("tcp conn fail, err: %v", err)
 		return
 	}
 
@@ -51,7 +52,7 @@ func (c *Client) Read(conn net.Conn) {
 	for {
 		message, err := c.packer.UnPack(conn)
 		if _, ok := err.(net.Error); err != nil && ok { // 处理网络原因
-			fmt.Println(err)
+			logger.Logger.ErrorF("network err: %v", err)
 			continue
 		}
 		c.OnMessage(&ClientPacket{
@@ -65,7 +66,7 @@ func (c *Client) Read(conn net.Conn) {
 func (c *Client) Send(conn net.Conn, message *Message) {
 	pack, err := c.packer.Pack(message)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.ErrorF("pack err:", err)
 		return
 	}
 	conn.Write(pack)

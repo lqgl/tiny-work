@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"github.com/lqgl/tinywork/logger"
 	"github.com/lqgl/tinywork/network"
 	messageId "github.com/lqgl/tinywork/network/protocol/gen/proto"
 	"os"
@@ -54,14 +54,14 @@ func (c *Client) OnMessage(packet *network.ClientPacket) {
 }
 
 func (c *Client) OnSystemSignal(signal os.Signal) bool {
-	fmt.Printf("[Client] 收到信号 %v \n", signal)
+	logger.Logger.InfoF("[Client] 收到信号 %v \n", signal)
 	tag := true
 	switch signal {
 	case syscall.SIGHUP:
 	// todo
 	case syscall.SIGPIPE:
 	default:
-		fmt.Println("[Client] 收到信号准备退出...")
+		logger.Logger.InfoF("[Client] 收到信号准备退出...")
 	}
 	return tag
 }

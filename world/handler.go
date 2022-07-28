@@ -1,8 +1,8 @@
 package world
 
 import (
-	"fmt"
 	"github.com/golang/protobuf/proto"
+	"github.com/lqgl/tinywork/logger"
 	"github.com/lqgl/tinywork/network"
 	player "github.com/lqgl/tinywork/network/protocol/gen/proto"
 	logicPlayer "github.com/lqgl/tinywork/player"
@@ -14,7 +14,7 @@ func (mm *MgrMgr) CreatePlayer(message *network.SessionPacket) {
 	if err != nil {
 		return
 	}
-	fmt.Println("[MgrMgr.CreatePlayer]", msg)
+	logger.Logger.InfoF("[MgrMgr.CreatePlayer]: %v", msg)
 	mm.SendMsg(uint64(player.MessageId_CreatePlayerResp), &player.CreateUserResp{}, message.Sess)
 }
 
@@ -24,6 +24,7 @@ func (mm *MgrMgr) UserLogin(message *network.SessionPacket) {
 	if err != nil {
 		return
 	}
+	logger.Logger.InfoF("[MgrMgr.UserLogin]: %v", msg)
 	newPlayer := logicPlayer.NewPlayer()
 	newPlayer.UId = 111
 	newPlayer.HandlerParamCh = message.Sess.ChWrite

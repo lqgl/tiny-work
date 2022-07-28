@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"github.com/lqgl/tinywork/logger"
 	"os"
 	"strings"
 )
@@ -26,7 +26,7 @@ func (c *Console) Run() {
 	for {
 		readString, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println("input err ,check your input and  try again !!!")
+			logger.Logger.DebugF("input err ,check your input and  try again !!!")
 			continue
 		}
 		strings.TrimSpace(readString)
@@ -34,7 +34,7 @@ func (c *Console) Run() {
 		readString = strings.Replace(readString, "\r", "", -1)
 		split := strings.Split(readString, " ")
 		if len(split) == 0 {
-			fmt.Println("input err, check your input and  try again !!! ")
+			logger.Logger.DebugF("input err, check your input and  try again !!! ")
 			continue
 		}
 		in := &InputParam{

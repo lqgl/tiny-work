@@ -1,9 +1,9 @@
 package player
 
 import (
-	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/lqgl/tinywork/function"
+	"github.com/lqgl/tinywork/logger"
 	"github.com/lqgl/tinywork/network"
 	player "github.com/lqgl/tinywork/network/protocol/gen/proto"
 )
@@ -15,7 +15,7 @@ func (p *Player) AddFriend(packet *network.Message) {
 	req := &player.AddFriendReq{}
 	err := proto.Unmarshal(packet.Data, req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
 	if !function.CheckInNumberSlice(req.UId, p.FriendList) {
@@ -28,7 +28,7 @@ func (p *Player) DelFriend(packet *network.Message) {
 	req := &player.DelFriendReq{}
 	err := proto.Unmarshal(packet.Data, req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
 	p.FriendList = function.DelEleInSlice(req.UId, p.FriendList)
@@ -39,10 +39,10 @@ func (p *Player) ResolveChatMsg(packet *network.Message) {
 	req := &player.SendChatMsgReq{}
 	err := proto.Unmarshal(packet.Data, req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
 	chatMsg := req.Msg.Content
-	fmt.Println(chatMsg)
+	logger.Logger.InfoF(chatMsg)
 	//todo 收到消息 然后转发给客户端（当你的好友给你发消息的情况）
 }

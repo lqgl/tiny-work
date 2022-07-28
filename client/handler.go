@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/golang/protobuf/proto"
+	"github.com/lqgl/tinywork/logger"
 	"github.com/lqgl/tinywork/network"
 	player "github.com/lqgl/tinywork/network/protocol/gen/proto"
 	"strconv"
@@ -12,10 +12,18 @@ type MessageHandler func(packet *network.ClientPacket)
 type InputHandler func(param *InputParam)
 
 func (c *Client) Login(param *InputParam) {
-	fmt.Printf("Login input Handler print")
-	fmt.Println(param.Command)
-	fmt.Println(param.Param)
-
+	logger.Logger.DebugF("Login input Handler print")
+	logger.Logger.InfoF(param.Command)
+	logger.Logger.InfoF("%v\n", param.Param)
+	id := c.GetMessageIdByCmd(param.Command)
+	if len(param.Param) != 2 {
+		return
+	}
+	msg := &player.CreateUserReq{
+		UserName: param.Param[0],
+		Password: param.Param[1],
+	}
+	c.Transport(id, msg) // 将 msg 发送给 cli
 }
 
 // CreatePlayerReq 创建角色
@@ -33,7 +41,7 @@ func (c *Client) CreatePlayerReq(param *InputParam) {
 
 // OnCreatePlayerResp 创建角色结果响应
 func (c *Client) OnCreatePlayerResp(packet *network.ClientPacket) {
-	fmt.Println("恭喜你创建角色成功")
+	logger.Logger.InfoF("恭喜你创建角色成功")
 }
 
 // LoginReq 玩家登录请求
@@ -61,7 +69,7 @@ func (c *Client) OnLoginRsp(packet *network.ClientPacket) {
 		return
 	}
 
-	fmt.Println("登陆成功")
+	logger.Logger.InfoF("登陆成功")
 }
 
 // AddFriendReq 添加好友请求
@@ -85,10 +93,10 @@ func (c *Client) OnAddFriendResp(packet *network.ClientPacket) {
 	req := &player.AddFriendResp{}
 	err := proto.Unmarshal(packet.Msg.Data, req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
-	fmt.Println("添加好友成功")
+	logger.Logger.InfoF("添加好友成功")
 }
 
 // DelFriendReq 删除好友请求
@@ -112,10 +120,10 @@ func (c *Client) OnDelFriendResp(packet *network.ClientPacket) {
 	req := &player.DelFriendResp{}
 	err := proto.Unmarshal(packet.Msg.Data, req)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
-	fmt.Println("删除好友成功")
+	logger.Logger.InfoF("删除好友成功")
 }
 
 func (c *Client) SendChatMsgReq(param *InputParam) {
@@ -145,6 +153,6 @@ func (c *Client) SendChatMsgReq(param *InputParam) {
 }
 
 func (c *Client) OnSendChatMsgRsp(packet *network.ClientPacket) {
-	fmt.Println("send  chat message success")
+	logger.Logger.InfoF("send  chat message success")
 
 }

@@ -1,7 +1,7 @@
 package network
 
 import (
-	"fmt"
+	"github.com/lqgl/tinywork/logger"
 	"net"
 )
 
@@ -23,12 +23,12 @@ func NewServer(address, network string) *Server {
 func (s *Server) Run() {
 	resolveTCPAddr, err := net.ResolveTCPAddr(s.network, s.address)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.ErrorF("%v\n", err)
 		return
 	}
 	tcpListener, err := net.ListenTCP(s.network, resolveTCPAddr)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.ErrorF("%v\n", err)
 		return
 	}
 	s.tcpListener = tcpListener

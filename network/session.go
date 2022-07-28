@@ -2,8 +2,9 @@ package network
 
 import (
 	"encoding/binary"
-	"fmt"
+	"github.com/lqgl/tinywork/logger"
 	"net"
+	"time"
 )
 
 type Session struct {
@@ -32,16 +33,15 @@ func (s *Session) Run() {
 // Read 接收来自客户端的消息
 func (s *Session) Read() {
 	for {
-		//err := s.conn.SetReadDeadline(time.Now().Add(time.Second)) // 设置读字节流超时时间
-		//if err != nil {
-		//	fmt.Println(err)
-		//	continue
-		//}
+		err := s.conn.SetReadDeadline(time.Now().Add(time.Second)) // 设置读字节流超时时间
+		if err != nil {
+			logger.Logger.DebugF("%v\n", err)
+			continue
+		}
 		message, err := s.packer.UnPack(s.conn)
 		if _, ok := err.(net.Error); ok { // 处理网络原因
 			continue
 		}
-		// fmt.Println("server received Message: ", string(message.Data))
 		s.MessageHandler(&SessionPacket{ // 将收到的消息发送给处理路由
 			Msg:  message,
 			Sess: s,
@@ -60,14 +60,14 @@ func (s *Session) Write() {
 }
 
 func (s *Session) send(message *Message) {
-	//err := s.conn.SetWriteDeadline(time.Now().Add(time.Second))
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
+	err := s.conn.SetWriteDeadline(time.Now().Add(time.Second))
+	if err != nil {
+		logger.Logger.DebugF("%v\n", err)
+		return
+	}
 	bytes, err := s.packer.Pack(message)
 	if err != nil {
-		fmt.Println(err)
+		logger.Logger.DebugF("%v\n", err)
 		return
 	}
 	s.conn.Write(bytes)
