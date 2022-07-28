@@ -2,7 +2,7 @@ package player
 
 import (
 	"github.com/golang/protobuf/proto"
-	"github.com/lqgl/tinywork/function"
+	"github.com/lqgl/tasty"
 	"github.com/lqgl/tinywork/logger"
 	"github.com/lqgl/tinywork/network"
 	player "github.com/lqgl/tinywork/network/protocol/gen/proto"
@@ -18,7 +18,7 @@ func (p *Player) AddFriend(packet *network.Message) {
 		logger.Logger.DebugF("%v\n", err)
 		return
 	}
-	if !function.CheckInNumberSlice(req.UId, p.FriendList) {
+	if !tasty.CheckInSlice(req.UId, p.FriendList) {
 		p.FriendList = append(p.FriendList, req.UId)
 	}
 }
@@ -31,7 +31,7 @@ func (p *Player) DelFriend(packet *network.Message) {
 		logger.Logger.DebugF("%v\n", err)
 		return
 	}
-	p.FriendList = function.DelEleInSlice(req.UId, p.FriendList)
+	p.FriendList = tasty.DelOneInSlice(req.UId, p.FriendList)
 }
 
 // ResolveChatMsg 处理消息逻辑
